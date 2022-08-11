@@ -2,12 +2,12 @@
 class ScrabbleLetters
 {
 private:
-	char letter;
+	wchar_t letter;
 	int points;
 public:
 	ScrabbleLetters();
-	ScrabbleLetters(char letter, int points);
-	char getLetter();
-	friend std::ostream& operator<<(std::ostream& out, ScrabbleLetters L);
-	friend std::istream& operator>>(std::istream& in, ScrabbleLetters& L);
+	ScrabbleLetters(wchar_t letter, int points);
+	wchar_t getLetter();
+	friend std::wostream& operator<<(std::wostream& out, ScrabbleLetters L);
+	friend std::wistream& operator>>(std::wistream& in, ScrabbleLetters& L);
 };
