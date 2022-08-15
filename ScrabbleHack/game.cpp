@@ -13,7 +13,6 @@ Game::Game()
 	{
 		PlayersLetters[i] = Empty;
 	}
-	Board ScrabbleB;
 	int menu = 1;
 	while (menu)
 	{
@@ -61,6 +60,17 @@ void Game::placeWord()
 		std::cout << "Enter the word you want to place" << std::endl;
 		std::cin >> word;
 	}
+	std::cout << "Enter placement of the word" << std::endl;
+	std::cout << "E.g 12 10 UP" << std::endl;
+	int x, y;
+	std::string direction;
+	std::cout << "X=";
+	std::cin >> x;
+	std::cout << "Y=";
+	std::cin >> y;
+	std::cout << "Direction (DOWN/RIGHT)";
+	std::cin >> direction;
+
 	// coutning quantity of each letter in the word;
 	int* countWord = new int[28] {0};
 
@@ -77,10 +87,30 @@ void Game::placeWord()
 		countWord[int(word[i]) - 64]++;
 	}
 
+	int missing = 0;
 	for (int i = 0; i < 28; i++)
 	{
+		//printing Missing [amount of characters] [the character missing].
+
 		if (countWord[i] > countPlayer[i])
+		{
+			missing += countWord[i] - countPlayer[i];
 			std::cout << "Missing " << countWord[i] - countPlayer[i] << " " << char(i + 64) << std::endl;
+			system("PAUSE");
+		}
 	}
-	system("PAUSE");
+	if (missing == 0)
+	{
+		for (int i = 0; i < word.length(); i++)
+		{
+			if (direction == "DOWN")
+			{
+				ScrabbleB.setLetter(ScrabbleLetters(word[i],0), y - 1 + i,x-1);
+			}
+			else
+			{
+				ScrabbleB.setLetter(ScrabbleLetters(word[i], 0), y - 1, x - 1+i);
+			}
+		}
+	}
 }

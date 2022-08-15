@@ -14,6 +14,11 @@ char ScrabbleLetters::getLetter()
 	return letter;
 }
 
+int ScrabbleLetters::getPoints()
+{
+	return points;
+}
+
 std::istream& operator>>(std::istream& in, ScrabbleLetters& L)
 {
 	std::cout << "Letter: ";

@@ -19,6 +19,7 @@ Board::Board()
 	{
 		for (int j = 0; j < 8; j++)
 		{
+			board[i][j].first = ScrabbleLetters(' ', 0);
 			board[i][j].second = None;
 			if (i <= 4) board[i][i].second = S2;
 			if (i % 7 == 0 && j % 7 == 0)
@@ -70,10 +71,23 @@ void Board::printBoard()
 				SetConsoleTextAttribute(hConsole, 5*(board[i][j].second.getMultiplier()%3) + 4);
 			if (board[i][j].second.getType() == 'L') 
 				SetConsoleTextAttribute(hConsole, 5*(board[i][j].second.getMultiplier()%3)+1);
-			std::cout << std::setw(2) << board[i][j].second.getType();
-			std::cout << board[i][j].second.getMultiplier();
+			if (board[i][j].first.getLetter() == ' ')
+			{
+				std::cout << std::setw(2) << board[i][j].second.getType();
+				std::cout << board[i][j].second.getMultiplier();
+			}
+			else
+			{
+				SetConsoleTextAttribute(hConsole, 32);
+				std::cout << std::setw(3) << board[i][j].first.getLetter();
+				//std::cout << board[i][j].first.getPoints();
+			}
 			SetConsoleTextAttribute(hConsole, 15);
 		}
 		std::cout << std::endl;
 	}
+}
+void Board::setLetter(ScrabbleLetters L, int x, int y)
+{
+	board[x][y].first = L;
 }
