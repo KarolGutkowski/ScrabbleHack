@@ -7,4 +7,5 @@ private:
 public:
 	Game();
 	void enterLetters();
+	void placeWord();
 };
