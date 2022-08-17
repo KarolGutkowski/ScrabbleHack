@@ -2,7 +2,7 @@
 #include <iomanip>
 #include "board.hpp"
 #include <windows.h>
-#define underline "\033[4m"
+
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -90,4 +90,9 @@ void Board::printBoard()
 void Board::setLetter(ScrabbleLetters L, int x, int y)
 {
 	board[x][y].first = L;
+}
+
+char Board::getLetter(int x, int y)
+{
+	return board[y][x].first.getLetter();
 }

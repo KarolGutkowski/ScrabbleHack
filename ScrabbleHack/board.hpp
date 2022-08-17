@@ -20,6 +20,7 @@ private:
 	std::pair<ScrabbleLetters,Bonus> board[15][15];
 public:
 	Board();
+	char getLetter(int x, int y);
 	void setLetter(ScrabbleLetters L,int x,int y);
 	void printBoard();
 };

@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <string>
 #include <utility>
+#include <ctype.h>
 
 
 Game::Game()
@@ -70,6 +71,31 @@ void Game::placeWord()
 	std::cin >> y;
 	std::cout << "Direction (DOWN/RIGHT)";
 	std::cin >> direction;
+	if (ScrabbleB.getLetter(7, 7) == ' ')
+	{
+		if (direction == "DOWN")
+		{
+			while (y + word.length() < 8 || x != 8)
+			{
+				std::cout << "Enter proper word placing tiles" << std::endl;
+				std::cout << "X=";
+				std::cin >> x;
+				std::cout << "Y=";
+				std::cin >> y;
+			}
+		}
+		else
+		{
+			while (x+word.length()<8 || y!=8)
+			{
+				std::cout << "Enter proper word placing tiles" << std::endl;
+				std::cout << "X=";
+				std::cin >> x;
+				std::cout << "Y=";
+				std::cin >> y;
+			}
+		}
+	}
 
 	// coutning quantity of each letter in the word;
 	int* countWord = new int[28] {0};
@@ -103,6 +129,19 @@ void Game::placeWord()
 	{
 		for (int i = 0; i < word.length(); i++)
 		{
+			bool removeFromUser = false;
+			int j = 0;
+			while (!removeFromUser && j < 7)
+			{
+				if (PlayersLetters[j].getLetter() == toupper(word[i]))
+				{
+					ScrabbleLetters Empty('.', 0);
+					PlayersLetters[j] = Empty;
+					removeFromUser = true;
+				}
+				j++;
+			}
+			
 			if (direction == "DOWN")
 			{
 				ScrabbleB.setLetter(ScrabbleLetters(word[i],0), y - 1 + i,x-1);
@@ -110,6 +149,18 @@ void Game::placeWord()
 			else
 			{
 				ScrabbleB.setLetter(ScrabbleLetters(word[i], 0), y - 1, x - 1+i);
+			}
+		}
+		int j = 0;
+		
+		for (int i = 0; i < 7; i++)
+		{
+			if (PlayersLetters[i].getLetter() != '.')
+			{
+				ScrabbleLetters temp = PlayersLetters[i];
+				PlayersLetters[i] = PlayersLetters[j];
+				PlayersLetters[j] = temp;
+				j++;
 			}
 		}
 	}
