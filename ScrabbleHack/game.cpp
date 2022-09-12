@@ -99,9 +99,11 @@ void Game::placeWord()
 	// coutning quantity of each letter in the word;
 	int* countWord = new int[28] {0};
 
+	int* countOnBoard = new int[28] {0};
 	// counting current users letters
 	// to determine ability to place the word that they've entered
 	int* countPlayer = new int[28] {0};
+
 	for (int i = 0; i < 7; i++)
 	{
 		countPlayer[int(PlayersLetters[i].getLetter())-64]++;
@@ -111,13 +113,23 @@ void Game::placeWord()
 	{
 		countWord[int(word[i]) - 64]++;
 	}
+	for (int i = 0; i < word.length(); i++)
+	{
+		std::pair<int, int> tile;
+		if (direction == "DOWN")
+			tile = std::make_pair(y - 1 + i, x - 1);
+		else
+			tile = std::make_pair(y - 1, x - 1 + i);
+		if (ScrabbleB.getLetter(tile.first, tile.second) != ' ')
+			countOnBoard[int(ScrabbleB.getLetter(tile.first, tile.second)) - 64]++;
+	}
 
 	int missing = 0;
 	for (int i = 0; i < 28; i++)
 	{
 		//printing Missing [amount of characters] [the character missing].
 
-		if (countWord[i] > countPlayer[i])
+		if (countWord[i] > countPlayer[i]+countOnBoard[i])
 		{
 			missing += countWord[i] - countPlayer[i];
 			std::cout << "Missing " << countWord[i] - countPlayer[i] << " " << char(i + 64) << std::endl;
@@ -130,24 +142,23 @@ void Game::placeWord()
 		{
 			bool removeFromUser = false;
 			int j = 0;
-			while (!removeFromUser && j < 7)
-			{
-				if (PlayersLetters[j].getLetter() == toupper(word[i]))
-				{
-					ScrabbleLetters Empty('.', 0);
-					PlayersLetters[j] = Empty;
-					removeFromUser = true;
-				}
-				j++;
-			}
-			
+			std::pair<int, int> tile;
 			if (direction == "DOWN")
-			{
-				ScrabbleB.setLetter(ScrabbleLetters(word[i],0), y - 1 + i,x-1);
-			}
+				tile = std::make_pair(y - 1 + i, x - 1);
 			else
-			{
-				ScrabbleB.setLetter(ScrabbleLetters(word[i], 0), y - 1, x - 1+i);
+				tile = std::make_pair(y - 1, x - 1 + i);
+			if (ScrabbleB.getLetter(tile.first, tile.second)!=word[i]) {
+				while (!removeFromUser && j < 7)
+				{
+					if (PlayersLetters[j].getLetter() == toupper(word[i]))
+					{
+						ScrabbleLetters Empty('.', 0);
+						PlayersLetters[j] = Empty;
+						removeFromUser = true;
+					}
+					j++;
+				}
+				ScrabbleB.setLetter(ScrabbleLetters(word[i], 0), tile.first, tile.second);
 			}
 		}
 		int j = 0;

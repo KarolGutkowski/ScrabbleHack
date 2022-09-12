@@ -88,8 +88,16 @@ void Board::printBoard()
 	}
 }
 void Board::setLetter(ScrabbleLetters L, int x, int y)
-{
-	board[x][y].first = L;
+{	
+	if (board[x][y].first.getLetter() == ' ')
+	{
+		board[x][y].first = L;
+	}
+	else
+	{
+		std::cout << "Tile [" << x + 1 << "][" << y + 1 << "] is already taken." << std::endl;
+		system("PAUSE");
+	}
 }
 
 char Board::getLetter(int x, int y)
