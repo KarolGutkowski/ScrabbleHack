@@ -5,6 +5,9 @@ class Game
 private:
 	ScrabbleLetters PlayersLetters[7];
 public:
+	Board ScrabbleB;
 	Game();
 	void enterLetters();
+	void placeWord();
+	bool IsLegalWord(std::string&);
 };

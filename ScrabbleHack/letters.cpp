@@ -1,5 +1,6 @@
 #include "letters.hpp"
 #include <iostream>
+#include <ctype.h>
 
 ScrabbleLetters::ScrabbleLetters(char letter, int points) :letter(letter),points(points) {}
 ScrabbleLetters::ScrabbleLetters() : letter(' '), points(1) {}
@@ -14,13 +15,21 @@ char ScrabbleLetters::getLetter()
 	return letter;
 }
 
+int ScrabbleLetters::getPoints()
+{
+	return points;
+}
+
 std::istream& operator>>(std::istream& in, ScrabbleLetters& L)
 {
 	std::cout << "Letter: ";
-	in >> L.letter;
-	std::cout << std::endl;
-	std::cout << "Point: ";
-	in >> L.points;
-	std::cout << std::endl;
+	char letter;
+	in >> letter;
+	L.letter = toupper(letter);
+	for (int i = 0; i < 28; i++)
+	{
+		if (L.lettersPoints[i].first == L.letter)
+			L.points = L.lettersPoints[i].second;
+	}
 	return in;
 }
