@@ -9,4 +9,5 @@ public:
 	Game();
 	void enterLetters();
 	void placeWord();
+	bool IsLegalWord(std::string&);
 };

@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 #include <ctype.h>
+#include <fstream>
 
 
 Game::Game()
@@ -50,19 +51,17 @@ void Game::enterLetters()
 	}
 }
 
-
 void Game::placeWord()
 {
 	std::cout << "Enter the word you want to place" << std::endl;
 	std::string word;
 	std::cin >> word;
-	while (word.length() > 15)
+	while (word.length() > 15 || !IsLegalWord(word))
 	{
-		std::cout << "Enter the word you want to place" << std::endl;
+		std::cout << "Enter legal word:" << std::endl;
 		std::cin >> word;
 	}
 	std::cout << "Enter placement of the word" << std::endl;
-	std::cout << "E.g 12 10 UP" << std::endl;
 	int x, y;
 	std::string direction;
 	std::cout << "X=";
@@ -164,4 +163,22 @@ void Game::placeWord()
 			}
 		}
 	}
+}
+
+bool Game::IsLegalWord(std::string& word)
+{
+	std::string filename = "./Words/groupedByLetters/wordsStartingWith_";
+	filename += (char)toupper(word[0]);
+	filename += ".txt";
+	std::ifstream file(filename);
+	if (file.is_open())
+	{
+		std::string line;
+		while (std::getline(file, line))
+		{
+			if (word == line) return true;
+		}
+	}
+	file.close();
+	return false;
 }
