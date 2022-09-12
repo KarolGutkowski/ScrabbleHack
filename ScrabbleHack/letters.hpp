@@ -6,7 +6,7 @@
 class ScrabbleLetters
 {
 private:
-	char letter;
+	wchar_t letter;
 	int points;
 	static constexpr std::pair<char, int> lettersPoints[28] = {
 		std::make_pair('*',0),
