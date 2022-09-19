@@ -10,4 +10,9 @@ public:
 	void enterLetters();
 	void placeWord();
 	bool IsLegalWord(std::string&);
+	void enterData(std::string &word, int &x, int &y, std::string &direction);
+	void countLetters(int* countWord, int* countOnBoard, int* countPlayer,
+		std::string word, int &x, int &y, std::string direction);
+	int missingLetters(int* countWord, int* countOnBoard, int* countPlayer);
+	void sortPlayerLetters();
 };

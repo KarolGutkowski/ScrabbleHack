@@ -95,8 +95,8 @@ void Board::setLetter(ScrabbleLetters L, int x, int y)
 	}
 	else
 	{
-		std::cout << "Tile [" << x + 1 << "][" << y + 1 << "] is already taken." << std::endl;
-		system("PAUSE");
+		//std::cout << "Tile [" << x + 1 << "][" << y + 1 << "] is already taken." << std::endl;
+		//system("PAUSE");
 	}
 }
 

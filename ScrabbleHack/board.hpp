@@ -23,4 +23,7 @@ public:
 	char getLetter(int x, int y);
 	void setLetter(ScrabbleLetters L,int x,int y);
 	void printBoard();
+	friend std::string direction(int& x, int& y);
+	void countLetters(int* countWord, int* countOnBoard, int* countPlayer,
+		std::string word, int x, int y, std::string direction);
 };
