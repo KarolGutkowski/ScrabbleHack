@@ -1,4 +1,4 @@
-<b><p color="red"> At this moment the app is not fully functional yet.</p> </b>
+<b><h1> At this moment the app is not fully functional yet.</h1> </b>
 # ScrabbleHack
 Early version of ScrabbleHack app.
 This app is supposed to help you win scrabble games 
