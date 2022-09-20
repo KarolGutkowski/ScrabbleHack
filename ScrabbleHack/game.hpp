@@ -15,4 +15,5 @@ public:
 		std::string word, int &x, int &y, std::string direction);
 	int missingLetters(int* countWord, int* countOnBoard, int* countPlayer);
 	void sortPlayerLetters();
+	bool legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard);
 };

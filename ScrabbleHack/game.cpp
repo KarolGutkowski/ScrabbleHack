@@ -6,6 +6,7 @@
 #include <utility>
 #include <ctype.h>
 #include <fstream>
+#define alphabetLength 28
 
 
 Game::Game()
@@ -57,15 +58,15 @@ void Game::placeWord()
 	int x, y;
 	enterData(word,x, y,direction);
 	
-	int* countWord = new int[28] {0};
-	int* countOnBoard = new int[28] {0};
-	int* countPlayer = new int[28] {0};
+	int* countWord = new int[alphabetLength] {0};
+	int* countOnBoard = new int[alphabetLength] {0};
+	int* countPlayer = new int[alphabetLength] {0};
 
 	countLetters(countWord, countOnBoard, countPlayer, word,x ,y, direction);
 
 	int missing = missingLetters(countWord, countOnBoard, countPlayer);
 
-	if (missing == 0)
+	if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard))
 	{
 		for (int i = 0; i < word.length(); i++)
 		{
@@ -77,7 +78,8 @@ void Game::placeWord()
 			else
 				tile = std::make_pair(y - 1, x - 1 + i);
 
-			if (ScrabbleB.getLetter(tile.second, tile.first) !=word[i]) {
+			if (ScrabbleB.getLetter(tile.second, tile.first) !=word[i]) 
+			{
 				//std::cout << "Letter " << word[i] << " not on board" << std::endl;
 				//system("PAUSE");
 				while (!removeFromUser && j < 7)
@@ -115,10 +117,6 @@ bool Game::IsLegalWord(std::string& word)
 	return false;
 }
 
-std::string direction(int& x, int& y)
-{
-	return "hello";
-}
 
 void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 	std::string word, int &x, int &y ,std::string direction)
@@ -155,14 +153,20 @@ void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer)
 {
 	int missing = 0;
-	for (int i = 0; i < 28; i++)
+	for (int i = 0; i < alphabetLength; i++)
 	{
 		if (countWord[i] > countPlayer[i] + countOnBoard[i])
 		{
 			missing += countWord[i] - countPlayer[i] - countOnBoard[i];
 			std::cout << "Missing " << countWord[i] - countPlayer[i] << " " << char(i + 64) << std::endl;
-			std::cout << "There's " << countOnBoard[i] << " " << (char)(i + 64) << " on the board." << std::endl;
+			//std::cout << "There's " << countOnBoard[i] << " " << (char)(i + 64) << " on the board." << std::endl;
 			system("PAUSE");
+		}
+		else if (countWord[i] == 0 && countOnBoard[i] != 0)
+		{
+			std::cout << "Can not place the word in this place" << std::endl;
+			system("PAUSE");
+			return -1;
 		}
 	}
 	return missing;
@@ -225,4 +229,36 @@ void Game::enterData(std::string& word, int& x, int& y, std::string& direction)
 			}
 		}
 	}
+}
+
+bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard)
+{
+	int onBoard = 0;
+	for (int i = 0; i < alphabetLength; i++)
+	{
+		onBoard += countOnBoard[i];
+	}
+	if (onBoard == 0 && ScrabbleB.getLetter(7, 7) != ' ')
+	{
+		std::cout << "Can not place the word in this place" << std::endl;
+		system("PAUSE");
+		return false;
+	}
+
+	for (int i = 0; i < word.length(); i++)
+	{
+		std::pair<int, int> tile;
+		if (direction == "DOWN")
+			tile = std::make_pair(y - 1 + i, x - 1);
+		else
+			tile = std::make_pair(y - 1, x - 1 + i);
+		char tileLetter = ScrabbleB.getLetter(tile.second, tile.first);
+		if (tileLetter != word[i] && tileLetter != ' ')
+		{
+			std::cout << "Can not place the word in this place" << std::endl;
+			system("PAUSE");
+			return false;
+		}
+	}
+	return true;
 }
