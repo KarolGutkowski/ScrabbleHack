@@ -16,14 +16,14 @@ Game::Game()
 	{
 		PlayersLetters[i] = Empty;
 	}
-	int menu = 1;
-	while (menu)
+	char menu = '1';
+	while (menu != '0')
 	{
-		if (menu == 3)
+		if (menu == '3')
 		{
 			enterLetters();
 		}
-		else if (menu == 2)
+		else if (menu == '2')
 		{
 			placeWord();
 		}
@@ -164,7 +164,8 @@ int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer)
 		}
 		else if (countWord[i] == 0 && countOnBoard[i] != 0)
 		{
-			std::cout << "Can not place the word in this place" << std::endl;
+			std::cout << "There are " << countOnBoard[i] << " " << (char)(i + 64) << "'s on the board while thre arenone in the word" << std::endl;
+			std::cout << "Can not place the word in this place (1)" << std::endl;
 			system("PAUSE");
 			return -1;
 		}
@@ -240,25 +241,104 @@ bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direct
 	}
 	if (onBoard == 0 && ScrabbleB.getLetter(7, 7) != ' ')
 	{
-		std::cout << "Can not place the word in this place" << std::endl;
+		std::cout << "Can not place the word in this place (2)" << std::endl;
 		system("PAUSE");
 		return false;
 	}
 
 	for (int i = 0; i < word.length(); i++)
 	{
-		std::pair<int, int> tile;
+		std::pair<int, int> tile = direction == "DOWN" ? std::make_pair(y - 1 + i, x - 1): std::make_pair(y - 1, x - 1 + i);
+		/*
 		if (direction == "DOWN")
 			tile = std::make_pair(y - 1 + i, x - 1);
 		else
 			tile = std::make_pair(y - 1, x - 1 + i);
+		*/
 		char tileLetter = ScrabbleB.getLetter(tile.second, tile.first);
 		if (tileLetter != word[i] && tileLetter != ' ')
 		{
-			std::cout << "Can not place the word in this place" << std::endl;
+			std::cout << "Can not place the word in this place (3)" << std::endl;
 			system("PAUSE");
 			return false;
 		}
 	}
+
+	//Checking for adjecent words
+	for (int i = 0; i < word.length(); i++)
+	{
+		
+		std::pair<int, int> tile;
+		std::pair<int, int> beginAdjacentWord;
+		if (direction == "DOWN")
+		{
+			tile = std::make_pair(y - 1 + i, x - 1);
+			beginAdjacentWord = tile;
+			beginAdjacentWord.second -= 1;
+		}
+		else
+		{
+			tile = std::make_pair(y - 1, x - 1 + i);
+			beginAdjacentWord = tile;
+			beginAdjacentWord.first -= 1;
+		}
+		char beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+		if (ScrabbleB.getLetter(tile.second, tile.first) == ' ')
+		{
+			int j = 0;
+			while (beginAdjacentWordLetter != ' ')
+			{
+				if (direction == "DOWN")
+				{
+					beginAdjacentWord.second -= 1;
+				}
+				else
+				{
+					beginAdjacentWord.first -= 1;
+				}
+				beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+				//std::cout << beginAdjacentWordLetter << std::endl;
+				//system("PAUSE");
+				j++;
+			}
+
+			if (direction == "DOWN")
+			{
+				beginAdjacentWord.second += 1;
+			}
+			else
+			{
+				beginAdjacentWord.first += 1;
+			}
+			beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+			std::string adjecentWord;
+			while (beginAdjacentWordLetter != ' ')
+			{
+				adjecentWord += beginAdjacentWordLetter;
+				if (direction == "DOWN")
+				{
+					beginAdjacentWord.second += 1;
+				}
+				else
+				{
+					beginAdjacentWord.first += 1;
+				}
+				if (beginAdjacentWord.second == tile.second && beginAdjacentWord.first == tile.second)
+				{
+					beginAdjacentWordLetter = word[i];
+				}
+				else {
+					beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+				}
+			}
+			if (!IsLegalWord(adjecentWord) && adjecentWord != "")
+			{
+				//std::cout << adjecentWord << std::endl;
+				//system("PAUSE");
+				return false;
+			}
+		}
+	}
+	
 	return true;
 }
