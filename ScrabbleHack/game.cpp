@@ -6,7 +6,7 @@
 #include <utility>
 #include <ctype.h>
 #include <fstream>
-#define alphabetLength 28
+#define alphabetLength 26
 
 
 Game::Game()
@@ -95,6 +95,9 @@ void Game::placeWord()
 				ScrabbleB.setLetter(ScrabbleLetters(word[i], 0), tile.first, tile.second);
 			}
 		}
+		delete[] countWord;
+		delete[] countOnBoard;
+		delete[] countPlayer;
 		sortPlayerLetters();
 	}
 }
@@ -123,12 +126,13 @@ void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 {
 	for (int i = 0; i < 7; i++)
 	{
-		countPlayer[int(PlayersLetters[i].getLetter()) - 64]++;
+		if(PlayersLetters[i].getLetter() != '.')
+			countPlayer[int(PlayersLetters[i].getLetter()) - 65]++;
 	}
 
 	for (int i = 0; i < word.length(); i++)
 	{
-		countWord[int(word[i]) - 64]++;
+		countWord[int(word[i]) - 65]++;
 	}
 	for (int i = 0; i < word.length(); i++)
 	{
@@ -145,7 +149,7 @@ void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 		if (ScrabbleB.getLetter(tile.second, tile.first) != ' ')
 		{
 			char letter = ScrabbleB.getLetter(tile.second, tile.first);
-			countOnBoard[int(ScrabbleB.getLetter(tile.second, tile.first)) - 64]++;
+			countOnBoard[int(ScrabbleB.getLetter(tile.second, tile.first)) - 65]++;
 		}
 	}
 }
@@ -158,13 +162,13 @@ int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer)
 		if (countWord[i] > countPlayer[i] + countOnBoard[i])
 		{
 			missing += countWord[i] - countPlayer[i] - countOnBoard[i];
-			std::cout << "Missing " << countWord[i] - countPlayer[i] << " " << char(i + 64) << std::endl;
-			//std::cout << "There's " << countOnBoard[i] << " " << (char)(i + 64) << " on the board." << std::endl;
+			std::cout << "Missing " << countWord[i] - countPlayer[i] << " " << char(i + 65) << std::endl;
+			//std::cout << "There's " << countOnBoard[i] << " " << (char)(i + 65) << " on the board." << std::endl;
 			system("PAUSE");
 		}
 		else if (countWord[i] == 0 && countOnBoard[i] != 0)
 		{
-			std::cout << "There are " << countOnBoard[i] << " " << (char)(i + 64) << "'s on the board while thre arenone in the word" << std::endl;
+			std::cout << "There are " << countOnBoard[i] << " " << char(i + 65) << "'s on the board while thre arenone in the word" << std::endl;
 			std::cout << "Can not place the word in this place (1)" << std::endl;
 			system("PAUSE");
 			return -1;

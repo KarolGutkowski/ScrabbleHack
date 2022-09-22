@@ -22,7 +22,6 @@ private:
 		std::make_pair('U',1),
 		std::make_pair('D',2),
 		std::make_pair('G',2),
-		std::make_pair('D',2),
 		std::make_pair('B',3),
 		std::make_pair('C',3),
 		std::make_pair('M',3),
