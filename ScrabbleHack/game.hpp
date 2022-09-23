@@ -4,6 +4,7 @@ class Game
 	friend class Board;
 private:
 	ScrabbleLetters PlayersLetters[7];
+	int points;
 public:
 	Board ScrabbleB;
 	Game();
@@ -15,5 +16,5 @@ public:
 		std::string word, int &x, int &y, std::string direction);
 	int missingLetters(int* countWord, int* countOnBoard, int* countPlayer);
 	void sortPlayerLetters();
-	bool legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard);
+	bool legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard,int& adjecentWordPoints);
 };

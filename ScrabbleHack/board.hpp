@@ -21,8 +21,12 @@ private:
 public:
 	Board();
 	char getLetter(int x, int y);
+	ScrabbleLetters getScrabbleLetter(int x, int y);
 	void setLetter(ScrabbleLetters L,int x,int y);
+	char getBonusType(int x, int y);
+	int getBonus(int x, int y);
 	void printBoard();
 	void countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 		std::string word, int x, int y, std::string direction);
+
 };

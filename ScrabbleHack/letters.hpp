@@ -8,7 +8,7 @@ class ScrabbleLetters
 private:
 	char letter;
 	int points;
-	static constexpr std::pair<char, int> lettersPoints[28] = {
+	static constexpr std::pair<char, int> lettersPoints[27] = {
 		std::make_pair('*',0),
 		std::make_pair('A',1),
 		std::make_pair('E',1),
@@ -40,6 +40,7 @@ private:
 public:
 	ScrabbleLetters();
 	ScrabbleLetters(char letter, int points);
+	ScrabbleLetters(char letter);
 	char getLetter();
 	int getPoints();
 	friend std::ostream& operator<<(std::ostream& out, ScrabbleLetters L);

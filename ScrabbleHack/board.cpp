@@ -42,6 +42,7 @@ Board::Board()
 	{
 		for (int j = i; j < 8; j++)
 		{
+			board[j][i].first = board[i][j].first;
 			board[j][i].second = board[i][j].second;
 		}
 	}
@@ -54,9 +55,13 @@ Board::Board()
 			board[14-i][j].second = board[i][j].second;
 			board[14-i][14-j].second = board[i][j].second;
 			board[i][14-j].second = board[i][j].second;
+			board[14 - i][j].first = board[i][j].first;
+			board[14 - i][14 - j].first = board[i][j].first;
+			board[i][14 - j].first = board[i][j].first;
 		}
 	}
 }
+
 
 void Board::printBoard()
 {
@@ -103,4 +108,19 @@ void Board::setLetter(ScrabbleLetters L, int x, int y)
 char Board::getLetter(int x, int y)
 {
 	return board[y][x].first.getLetter();
+}
+
+
+int Board::getBonus(int x, int y)
+{
+	return board[y][x].second.getMultiplier();
+}
+char Board::getBonusType(int x, int y)
+{
+	return board[y][x].second.getType();
+}
+
+ScrabbleLetters Board::getScrabbleLetter(int x, int y)
+{
+	return ScrabbleLetters(board[y][x].first.getLetter(), board[y][x].first.getPoints());
 }

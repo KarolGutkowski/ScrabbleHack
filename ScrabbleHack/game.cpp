@@ -11,6 +11,7 @@
 
 Game::Game()
 {
+	points = 0;
 	ScrabbleLetters Empty('.', 0);
 	for (int i = 0; i < 7; i++)
 	{
@@ -32,6 +33,7 @@ Game::Game()
 		std::cout << std::endl;
 		for (int i = 0; i < 7; i++) std::cout << std::setw(3) << PlayersLetters[i] << " ";
 		std::cout << std::endl;
+		std::cout << "You have " << points << " points" << std::endl;
 		std::cout << "Print Board --> 1" << std::endl;
 		std::cout << "Place word --> 2" << std::endl;
 		std::cout << "Enter your letters --> 3" << std::endl;
@@ -54,6 +56,7 @@ void Game::enterLetters()
 
 void Game::placeWord()
 {
+	int currentWordPoints = 0;
 	std::string word, direction;
 	int x, y;
 	enterData(word,x, y,direction);
@@ -65,9 +68,10 @@ void Game::placeWord()
 	countLetters(countWord, countOnBoard, countPlayer, word,x ,y, direction);
 
 	int missing = missingLetters(countWord, countOnBoard, countPlayer);
-
-	if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard))
+	int adjecentWordPoints = 0;
+	if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard, adjecentWordPoints))
 	{
+		int wordMultiplier = 1;
 		for (int i = 0; i < word.length(); i++)
 		{
 			bool removeFromUser = false;
@@ -78,23 +82,39 @@ void Game::placeWord()
 			else
 				tile = std::make_pair(y - 1, x - 1 + i);
 
-			if (ScrabbleB.getLetter(tile.second, tile.first) !=word[i]) 
+			if (ScrabbleB.getLetter(tile.second, tile.first) == ' ')
 			{
-				//std::cout << "Letter " << word[i] << " not on board" << std::endl;
-				//system("PAUSE");
+				int letterPoints = 0;
 				while (!removeFromUser && j < 7)
 				{
 					if (PlayersLetters[j].getLetter() == toupper(word[i]))
 					{
+						letterPoints = PlayersLetters[j].getPoints();
+						int bonusAmount = ScrabbleB.getBonus(tile.second, tile.first);
+						if (ScrabbleB.getBonusType(tile.second, tile.first) == 'S')
+						{
+							wordMultiplier *= bonusAmount;
+							currentWordPoints += letterPoints;
+						}
+						else
+						{
+							currentWordPoints += letterPoints * bonusAmount;
+						}
 						ScrabbleLetters Empty('.', 0);
 						PlayersLetters[j] = Empty;
 						removeFromUser = true;
 					}
 					j++;
 				}
-				ScrabbleB.setLetter(ScrabbleLetters(word[i], 0), tile.first, tile.second);
+				ScrabbleB.setLetter(ScrabbleLetters(word[i], letterPoints), tile.first, tile.second);
+			}
+			else
+			{
+				currentWordPoints += ScrabbleB.getScrabbleLetter(tile.second, tile.first).getPoints();
 			}
 		}
+		points += currentWordPoints * wordMultiplier;
+		points += adjecentWordPoints;
 		delete[] countWord;
 		delete[] countOnBoard;
 		delete[] countPlayer;
@@ -236,7 +256,7 @@ void Game::enterData(std::string& word, int& x, int& y, std::string& direction)
 	}
 }
 
-bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard)
+bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard,int& adjecentWordPoints)
 {
 	int onBoard = 0;
 	for (int i = 0; i < alphabetLength; i++)
@@ -314,7 +334,10 @@ bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direct
 			{
 				beginAdjacentWord.first += 1;
 			}
-			beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+			ScrabbleLetters currentScrabble = ScrabbleB.getScrabbleLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+			beginAdjacentWordLetter = currentScrabble.getLetter();
+			adjecentWordPoints += currentScrabble.getPoints();
+			int adjecentWordMultiplier = 1;
 			std::string adjecentWord;
 			while (beginAdjacentWordLetter != ' ')
 			{
@@ -327,18 +350,29 @@ bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direct
 				{
 					beginAdjacentWord.first += 1;
 				}
-				if (beginAdjacentWord.second == tile.second && beginAdjacentWord.first == tile.second)
+				if (beginAdjacentWord.second == tile.second && beginAdjacentWord.first == tile.first)
 				{
-					beginAdjacentWordLetter = word[i];
+					currentScrabble = ScrabbleLetters(word[i]);
+					beginAdjacentWordLetter = currentScrabble.getLetter();
+					if (ScrabbleB.getBonusType(beginAdjacentWord.second, beginAdjacentWord.first) == 'S')
+					{
+						adjecentWordMultiplier *= ScrabbleB.getBonus(beginAdjacentWord.second, beginAdjacentWord.first);
+						adjecentWordPoints += currentScrabble.getPoints();
+					}
+					else
+					{
+						adjecentWordPoints+= currentScrabble.getPoints() *ScrabbleB.getBonus(beginAdjacentWord.second, beginAdjacentWord.first);
+					}
 				}
 				else {
-					beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+					currentScrabble = ScrabbleB.getScrabbleLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+					beginAdjacentWordLetter = currentScrabble.getLetter();
+					adjecentWordPoints += currentScrabble.getPoints();
 				}
 			}
+			//adjecentWordPoints = 0;
 			if (!IsLegalWord(adjecentWord) && adjecentWord != "")
 			{
-				//std::cout << adjecentWord << std::endl;
-				//system("PAUSE");
 				return false;
 			}
 		}
