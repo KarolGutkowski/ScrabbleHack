@@ -60,7 +60,7 @@ void Game::placeWord()
 	std::string word, direction;
 	int x, y;
 	enterData(word,x, y,direction);
-	
+	if (word == "0") return;
 	int* countWord = new int[alphabetLength] {0};
 	int* countOnBoard = new int[alphabetLength] {0};
 	int* countPlayer = new int[alphabetLength] {0};
@@ -216,11 +216,15 @@ void Game::sortPlayerLetters()
 void Game::enterData(std::string& word, int& x, int& y, std::string& direction)
 {
 	std::cout << "Enter the word you want to place" << std::endl;
+	std::cout << "Want to go back? press 0 and enter :)" << std::endl;
 	std::cin >> word;
+	if (word == "0") return;
 	while (word.length() > 15 || !IsLegalWord(word))
 	{
 		std::cout << "Enter legal word:" << std::endl;
+		std::cout << "Want to go back? press 0 and enter :)" << std::endl;
 		std::cin >> word;
+		if (word == "0") return;
 	}
 	std::cout << "Enter placement of the word" << std::endl;
 	std::cout << "X=";

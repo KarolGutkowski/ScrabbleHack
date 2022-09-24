@@ -10,7 +10,7 @@ ScrabbleLetters::ScrabbleLetters(char letter):letter(letter)
 	for (int i = 0; i < 27; i++)
 	{
 		if (lettersPoints[i].first == letter)
-			points = lettersPoints[i].second;
+			this->points = lettersPoints[i].second;
 	}
 }
 std::ostream& operator<<(std::ostream& out, ScrabbleLetters L)
