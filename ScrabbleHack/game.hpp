@@ -14,7 +14,11 @@ public:
 	void enterData(std::string &word, int &x, int &y, std::string &direction);
 	void countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 		std::string word, int &x, int &y, std::string direction);
+	void countWordLetters(int* countWord,std::string word);
+	void countPlayerLetters(int* countPlayer);
+	void countBoardLetters(int* countOnBoard, std::string word, int x, int y, std::string direction);
 	int missingLetters(int* countWord, int* countOnBoard, int* countPlayer);
 	void sortPlayerLetters();
 	bool legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard,int& adjecentWordPoints);
+	void otherPlayerWord();
 };

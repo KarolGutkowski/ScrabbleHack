@@ -28,6 +28,10 @@ Game::Game()
 		{
 			placeWord();
 		}
+		else if (menu == '4')
+		{
+			otherPlayerWord();
+		}
  		system("CLS");
 		ScrabbleB.printBoard();
 		std::cout << std::endl;
@@ -37,6 +41,7 @@ Game::Game()
 		std::cout << "Print Board --> 1" << std::endl;
 		std::cout << "Place word --> 2" << std::endl;
 		std::cout << "Enter your letters --> 3" << std::endl;
+		std::cout << "Enter other players word --> 4" << std::endl;
 		std::cout << "End --> 0" << std::endl;
 		std::cout << "Enter a number: " << std::endl;
 		std::cin >> menu;
@@ -144,34 +149,9 @@ bool Game::IsLegalWord(std::string& word)
 void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 	std::string word, int &x, int &y ,std::string direction)
 {
-	for (int i = 0; i < 7; i++)
-	{
-		if(PlayersLetters[i].getLetter() != '.')
-			countPlayer[int(PlayersLetters[i].getLetter()) - 65]++;
-	}
-
-	for (int i = 0; i < word.length(); i++)
-	{
-		countWord[int(word[i]) - 65]++;
-	}
-	for (int i = 0; i < word.length(); i++)
-	{
-		std::pair<int, int> tile;
-		if (direction == "DOWN")
-		{
-			tile = std::make_pair(y - 1 + i, x - 1);
-		}
-		else
-		{
-			tile = std::make_pair(y - 1, x - 1 + i);
-		}
-
-		if (ScrabbleB.getLetter(tile.second, tile.first) != ' ')
-		{
-			char letter = ScrabbleB.getLetter(tile.second, tile.first);
-			countOnBoard[int(ScrabbleB.getLetter(tile.second, tile.first)) - 65]++;
-		}
-	}
+	countWordLetters(countWord, word);
+	countPlayerLetters(countPlayer);
+	countBoardLetters(countOnBoard, word, x, y, direction);
 }
 
 int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer)
@@ -383,4 +363,71 @@ bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direct
 	}
 	
 	return true;
+}
+
+
+void Game::otherPlayerWord()
+{
+	std::string word, direction;
+	int x, y;
+	enterData(word,x,y,direction);
+	if (word == "") return;
+	int* countWord = new int[alphabetLength] {0};
+	int* countOnBoard = new int[alphabetLength] {0};
+	countWordLetters(countWord, word);
+	countBoardLetters(countOnBoard, word, x, y, direction);
+	int adjecentWordPoints = 0;
+	if (legalPlacement(word, x, y, direction, countOnBoard, adjecentWordPoints))
+	{
+		std::pair<int, int> tile;
+		for (int i = 0; i < word.length(); i++)
+		{
+			if (direction == "DOWN")
+				tile = std::make_pair(y - 1 + i, x - 1);
+			else
+				tile = std::make_pair(y - 1, x - 1 + i);
+			ScrabbleLetters currentLetter(word[i]);
+			ScrabbleB.setLetter(currentLetter,tile.first, tile.second);
+		}
+	}
+}
+
+
+void Game::countWordLetters(int* countWord, std::string word)
+{
+	for (int i = 0; i < word.length(); i++)
+	{
+		countWord[int(word[i]) - 65]++;
+	}
+}
+
+void Game::countPlayerLetters(int* countPlayer)
+{
+	for (int i = 0; i < 7; i++)
+	{
+		if (PlayersLetters[i].getLetter() != '.')
+			countPlayer[int(PlayersLetters[i].getLetter()) - 65]++;
+	}
+}
+
+void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,std::string direction)
+{
+	for (int i = 0; i < word.length(); i++)
+	{
+		std::pair<int, int> tile;
+		if (direction == "DOWN")
+		{
+			tile = std::make_pair(y - 1 + i, x - 1);
+		}
+		else
+		{
+			tile = std::make_pair(y - 1, x - 1 + i);
+		}
+
+		if (ScrabbleB.getLetter(tile.second, tile.first) != ' ')
+		{
+			char letter = ScrabbleB.getLetter(tile.second, tile.first);
+			countOnBoard[int(ScrabbleB.getLetter(tile.second, tile.first)) - 65]++;
+		}
+	}
 }
