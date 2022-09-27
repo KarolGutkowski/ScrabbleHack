@@ -63,16 +63,16 @@ void Game::placeWord()
 {
 	int currentWordPoints = 0;
 	std::string word, direction;
-	int x, y;
+	int x, y, countBlanks=0;
 	enterData(word,x, y,direction);
 	if (word == "0") return;
 	int* countWord = new int[alphabetLength] {0};
 	int* countOnBoard = new int[alphabetLength] {0};
 	int* countPlayer = new int[alphabetLength] {0};
 
-	countLetters(countWord, countOnBoard, countPlayer, word,x ,y, direction);
+	countLetters(countWord, countOnBoard, countPlayer, word,x ,y, direction, countBlanks);
 
-	int missing = missingLetters(countWord, countOnBoard, countPlayer);
+	int missing = missingLetters(countWord, countOnBoard, countPlayer,countBlanks);
 	int adjecentWordPoints = 0;
 	if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard, adjecentWordPoints))
 	{
@@ -90,7 +90,7 @@ void Game::placeWord()
 			if (ScrabbleB.getLetter(tile.second, tile.first) == ' ')
 			{
 				int letterPoints = 0;
-				while (!removeFromUser && j < 7)
+				while (!removeFromUser && j<7)
 				{
 					if (PlayersLetters[j].getLetter() == toupper(word[i]))
 					{
@@ -147,14 +147,14 @@ bool Game::IsLegalWord(std::string& word)
 
 
 void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
-	std::string word, int &x, int &y ,std::string direction)
+	std::string word, int &x, int &y ,std::string direction, int& countBlanks)
 {
 	countWordLetters(countWord, word);
-	countPlayerLetters(countPlayer);
+	countPlayerLetters(countPlayer,countBlanks);
 	countBoardLetters(countOnBoard, word, x, y, direction);
 }
 
-int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer)
+int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer, int countBlanks)
 {
 	int missing = 0;
 	for (int i = 0; i < alphabetLength; i++)
@@ -162,9 +162,9 @@ int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer)
 		if (countWord[i] > countPlayer[i] + countOnBoard[i])
 		{
 			missing += countWord[i] - countPlayer[i] - countOnBoard[i];
-			std::cout << "Missing " << countWord[i] - countPlayer[i] << " " << char(i + 65) << std::endl;
+			//std::cout << "Missing " << countWord[i] - countPlayer[i] << " " << char(i + 65) << std::endl;
 			//std::cout << "There's " << countOnBoard[i] << " " << (char)(i + 65) << " on the board." << std::endl;
-			system("PAUSE");
+			//system("PAUSE");
 		}
 		else if (countWord[i] == 0 && countOnBoard[i] != 0)
 		{
@@ -172,6 +172,21 @@ int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer)
 			std::cout << "Can not place the word in this place (1)" << std::endl;
 			system("PAUSE");
 			return -1;
+		}
+	}
+	if (missing <= countBlanks)
+	{
+		for (int i = 0; i < alphabetLength; i++)
+		{
+			while (countWord[i] > countPlayer[i] + countOnBoard[i])
+			{
+				int j = 0;
+				while (PlayersLetters[j].getLetter() != '*' && j < 7) j++;
+				PlayersLetters[j] = ScrabbleLetters(char(i + 65), 0);
+				countBlanks--;
+				countPlayer[i]++;
+				missing--;
+			}
 		}
 	}
 	return missing;
@@ -401,12 +416,18 @@ void Game::countWordLetters(int* countWord, std::string word)
 	}
 }
 
-void Game::countPlayerLetters(int* countPlayer)
+void Game::countPlayerLetters(int* countPlayer, int & countBlanks)
 {
 	for (int i = 0; i < 7; i++)
 	{
-		if (PlayersLetters[i].getLetter() != '.')
+		if (PlayersLetters[i].getLetter() != '.' && PlayersLetters[i].getLetter() != '*')
+		{
 			countPlayer[int(PlayersLetters[i].getLetter()) - 65]++;
+		}
+		else if (PlayersLetters[i].getLetter() == '*')
+		{
+			countBlanks++;
+		}
 	}
 }
 
