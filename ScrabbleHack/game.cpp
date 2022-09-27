@@ -401,8 +401,21 @@ void Game::otherPlayerWord()
 				tile = std::make_pair(y - 1 + i, x - 1);
 			else
 				tile = std::make_pair(y - 1, x - 1 + i);
-			ScrabbleLetters currentLetter(word[i]);
-			ScrabbleB.setLetter(currentLetter,tile.first, tile.second);
+			if (ScrabbleB.getLetter(tile.second, tile.first) == ' ') {
+				std::string isBlank = "N";
+				std::cout << "Is letter " << word[i] << " supposed to be a blank tile? (Y/N)" << std::endl;
+				std::cin >> isBlank;
+				if (isBlank == "Y")
+				{
+					ScrabbleLetters currentLetter(word[i], 0);
+					ScrabbleB.setLetter(currentLetter, tile.first, tile.second);
+				}
+				else {
+					ScrabbleLetters currentLetter(word[i]);
+					ScrabbleB.setLetter(currentLetter, tile.first, tile.second);
+				}
+			}
+
 		}
 	}
 }
