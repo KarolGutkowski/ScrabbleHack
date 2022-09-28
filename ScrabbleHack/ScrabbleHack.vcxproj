@@ -149,6 +149,9 @@
     <ClInclude Include="game.hpp" />
     <ClInclude Include="letters.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Words\English\words.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
