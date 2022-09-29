@@ -32,10 +32,10 @@ Game::Game()
 		{
 			otherPlayerWord();
 		}
-		else if (menu == '5')
-		{
-			giveBestWord();
-		}
+		//else if (menu == '5')
+		//{
+		//	giveBestWord();
+		//}
  		system("CLS");
 		ScrabbleB.printBoard();
 		std::cout << std::endl;
@@ -46,7 +46,7 @@ Game::Game()
 		std::cout << "Place word --> 2" << std::endl;
 		std::cout << "Enter your letters --> 3" << std::endl;
 		std::cout << "Enter other players word --> 4" << std::endl;
-		std::cout << "Give me best word to place --> 5" << std::endl;
+		//std::cout << "Give me best word to place --> 5" << std::endl;
 		std::cout << "End --> 0" << std::endl;
 		std::cout << "Enter a number: " << std::endl;
 		std::cin >> menu;
@@ -80,7 +80,7 @@ void Game::placeWord()
 	int missing = missingLetters(countWord, countOnBoard, countPlayer,countBlanks);
 	int adjecentWordPoints = 0;
 
-	if (missing <= countBlanks)
+	if (missing <= countBlanks && missing >0)
 	{
 		for (int i = 0; i < alphabetLength; i++)
 		{
@@ -263,75 +263,101 @@ void Game::enterData(std::string& word, int& x, int& y, std::string& direction)
 
 bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard,int& adjecentWordPoints)
 {
-	try {
-		int onBoard = 0;
-		for (int i = 0; i < alphabetLength; i++)
-		{
-			onBoard += countOnBoard[i];
-		}
-		if (onBoard == 0 && ScrabbleB.getLetter(7, 7) != ' ')
-		{
-			//std::cout << "Can not place the word in this place (2)" << std::endl;
-			//system("PAUSE");
-			return false;
-		}
+	//checking if 
+	std::pair<int, int> tile = direction == "DOWN" ? std::make_pair(y-2, x - 1) : std::make_pair(y - 1, x - 2);
+	if (ScrabbleB.getLetter(tile.second, tile.first) != ' ')
+	{
+		return false;
+	}
 
-		for (int i = 0; i < word.length(); i++)
-		{
-			std::pair<int, int> tile = direction == "DOWN" ? std::make_pair(y - 1 + i, x - 1) : std::make_pair(y - 1, x - 1 + i);
+	int onBoard = 0;
+	for (int i = 0; i < alphabetLength; i++)
+	{
+		onBoard += countOnBoard[i];
+	}
+	if (onBoard == 0 && ScrabbleB.getLetter(7, 7) != ' ')
+	{
+		//std::cout << "Can not place the word in this place (2)" << std::endl;
+			//system("PAUSE");
+		return false;
+	}
+
+	int charactersOnBoard = 0;
+	for (int i = 0; i < word.length(); i++)
+	{
+		std::pair<int, int> tile = direction == "DOWN" ? std::make_pair(y - 1 + i, x - 1) : std::make_pair(y - 1, x - 1 + i);
 			/*
 			if (direction == "DOWN")
 				tile = std::make_pair(y - 1 + i, x - 1);
 			else
 				tile = std::make_pair(y - 1, x - 1 + i);
 			*/
-			char tileLetter = ScrabbleB.getLetter(tile.second, tile.first);
-			if (tileLetter != word[i] && tileLetter != ' ')
-			{
+		
+		char tileLetter = ScrabbleB.getLetter(tile.second, tile.first);
+		if (tileLetter == word[i]) charactersOnBoard++;
+		if (tileLetter != word[i] && tileLetter != ' ')
+		{
 				//std::cout << "Can not place the word in this place (3)" << std::endl;
 				//system("PAUSE");
-				return false;
-			}
+			return false;
 		}
+	}
+	if (charactersOnBoard == word.length()) return false; //this means word is already on the board in the given place
 
 		//Checking for adjecent words
-		for (int i = 0; i < word.length(); i++)
-		{
+	for (int i = 0; i < word.length(); i++)
+	{
 
-			std::pair<int, int> tile;
-			std::pair<int, int> beginAdjacentWord;
+		std::pair<int, int> tile;
+		std::pair<int, int> beginAdjacentWord;
+		if (direction == "DOWN")
+		{
+			tile = std::make_pair(y - 1 + i, x - 1);
+			beginAdjacentWord = tile;
+			beginAdjacentWord.second -= 1;
+		}
+		else
+		{
+			tile = std::make_pair(y - 1, x - 1 + i);
+			beginAdjacentWord = tile;
+			beginAdjacentWord.first -= 1;
+		}
+		char beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+		if (ScrabbleB.getLetter(tile.second, tile.first) == ' ')
+		{
+			int j = 0;
+			while (beginAdjacentWordLetter != ' ')
+			{
+				if (direction == "DOWN")
+				{
+					beginAdjacentWord.second -= 1;
+				}
+				else
+				{
+					beginAdjacentWord.first -= 1;
+				}
+				beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+				//std::cout << beginAdjacentWordLetter << std::endl;
+				//system("PAUSE");
+				j++;
+			}
+
 			if (direction == "DOWN")
 			{
-				tile = std::make_pair(y - 1 + i, x - 1);
-				beginAdjacentWord = tile;
-				beginAdjacentWord.second -= 1;
+				beginAdjacentWord.second += 1;
 			}
 			else
 			{
-				tile = std::make_pair(y - 1, x - 1 + i);
-				beginAdjacentWord = tile;
-				beginAdjacentWord.first -= 1;
+				beginAdjacentWord.first += 1;
 			}
-			char beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
-			if (ScrabbleB.getLetter(tile.second, tile.first) == ' ')
+			ScrabbleLetters currentScrabble = ScrabbleB.getScrabbleLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+			beginAdjacentWordLetter = currentScrabble.getLetter();
+			adjecentWordPoints += currentScrabble.getPoints();
+			int adjecentWordMultiplier = 1;
+			std::string adjecentWord;
+			while (beginAdjacentWordLetter != ' ')
 			{
-				int j = 0;
-				while (beginAdjacentWordLetter != ' ')
-				{
-					if (direction == "DOWN")
-					{
-						beginAdjacentWord.second -= 1;
-					}
-					else
-					{
-						beginAdjacentWord.first -= 1;
-					}
-					beginAdjacentWordLetter = ScrabbleB.getLetter(beginAdjacentWord.second, beginAdjacentWord.first);
-					//std::cout << beginAdjacentWordLetter << std::endl;
-					//system("PAUSE");
-					j++;
-				}
-
+				adjecentWord += beginAdjacentWordLetter;
 				if (direction == "DOWN")
 				{
 					beginAdjacentWord.second += 1;
@@ -340,53 +366,32 @@ bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direct
 				{
 					beginAdjacentWord.first += 1;
 				}
-				ScrabbleLetters currentScrabble = ScrabbleB.getScrabbleLetter(beginAdjacentWord.second, beginAdjacentWord.first);
-				beginAdjacentWordLetter = currentScrabble.getLetter();
-				adjecentWordPoints += currentScrabble.getPoints();
-				int adjecentWordMultiplier = 1;
-				std::string adjecentWord;
-				while (beginAdjacentWordLetter != ' ')
+				if (beginAdjacentWord.second == tile.second && beginAdjacentWord.first == tile.first)
 				{
-					adjecentWord += beginAdjacentWordLetter;
-					if (direction == "DOWN")
+					currentScrabble = ScrabbleLetters(word[i]);
+					beginAdjacentWordLetter = currentScrabble.getLetter();
+					if (ScrabbleB.getBonusType(beginAdjacentWord.second, beginAdjacentWord.first) == 'S')
 					{
-						beginAdjacentWord.second += 1;
+						adjecentWordMultiplier *= ScrabbleB.getBonus(beginAdjacentWord.second, beginAdjacentWord.first);
+						adjecentWordPoints += currentScrabble.getPoints();
 					}
 					else
 					{
-						beginAdjacentWord.first += 1;
+						adjecentWordPoints += currentScrabble.getPoints() * ScrabbleB.getBonus(beginAdjacentWord.second, beginAdjacentWord.first);
 					}
-					if (beginAdjacentWord.second == tile.second && beginAdjacentWord.first == tile.first)
-					{
-						currentScrabble = ScrabbleLetters(word[i]);
-						beginAdjacentWordLetter = currentScrabble.getLetter();
-						if (ScrabbleB.getBonusType(beginAdjacentWord.second, beginAdjacentWord.first) == 'S')
-						{
-							adjecentWordMultiplier *= ScrabbleB.getBonus(beginAdjacentWord.second, beginAdjacentWord.first);
-							adjecentWordPoints += currentScrabble.getPoints();
-						}
-						else
-						{
-							adjecentWordPoints += currentScrabble.getPoints() * ScrabbleB.getBonus(beginAdjacentWord.second, beginAdjacentWord.first);
-						}
 					}
-					else {
-						currentScrabble = ScrabbleB.getScrabbleLetter(beginAdjacentWord.second, beginAdjacentWord.first);
-						beginAdjacentWordLetter = currentScrabble.getLetter();
-						adjecentWordPoints += currentScrabble.getPoints();
-					}
-				}
-				//adjecentWordPoints = 0;
-				if (!IsLegalWord(adjecentWord) && adjecentWord != "")
-				{
-					return false;
+				else {
+					currentScrabble = ScrabbleB.getScrabbleLetter(beginAdjacentWord.second, beginAdjacentWord.first);
+					beginAdjacentWordLetter = currentScrabble.getLetter();
+					adjecentWordPoints += currentScrabble.getPoints();
 				}
 			}
+			//adjecentWordPoints = 0;
+			if (!IsLegalWord(adjecentWord) && adjecentWord != "")
+			{
+				return false;
+			}
 		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
 	}
 	return true;
 }
@@ -477,6 +482,7 @@ void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,
 	}
 }
 
+/*
 void Game::giveBestWord()
 {
 	std::string filename = "./Words/English/words.txt";
@@ -500,6 +506,7 @@ void Game::giveBestWord()
 						std::string direction = m == 0 ? "DOWN" : "RIGHT";
 
 						if (ScrabbleB.getLetter(i, j) != ' ' || (i==7 && j==7)) {
+							 
 							int countWord[alphabetLength] = { 0 };
 							int countOnBoard[alphabetLength] = { 0 };
 							int countPlayer[alphabetLength] = { 0 };
@@ -509,13 +516,15 @@ void Game::giveBestWord()
 							int adjecentWordPoints = 0;
 							if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard, adjecentWordPoints))
 							{
-								std::cout << word << " at [" << x << "],[" << y << "] " << direction << "WARDS" << std::endl;
+								int points = adjecentWordPoints;
+								points += calculatePoints(word, direction, x,y);
+								std::cout << word << " at [" << x << "][" << y << "] " << direction << "WARDS for " << points << " points." << std::endl;
 							}
 						}
 					}
 				}
 			}
-			/*
+			
 			progress++;
 			completion = progress * 100 / total;
 			std::cout << "\r";
@@ -528,25 +537,27 @@ void Game::giveBestWord()
 			{
 				std::cout << "-";
 			}
-			*/
-			/*
+			
+			
 			progress++;
 			if (completion != progress * 100 / total) 
 			{
 				std::cout << completion << "%" << std::endl;
 				completion = progress * 100 / total;
 			}
-			*/
+			
 		}
 		std::cout << "Those are all the words you could place " << std::endl;
 		system("PAUSE");
 	}
-	//file.close();
+	file.close();
 }
+*/
 
 /*
-int Game::calculatePoints()
+int Game::calculatePoints(std::string word, std::string direction, int x, int y)
 {
+		int currentWordPoints = 0;
 		int wordMultiplier = 1;
 		for (int i = 0; i < word.length(); i++)
 		{
@@ -589,7 +600,6 @@ int Game::calculatePoints()
 				currentWordPoints += ScrabbleB.getScrabbleLetter(tile.second, tile.first).getPoints();
 			}
 		}
-		//points += currentWordPoints * wordMultiplier;
-		//points += adjecentWordPoints;
+		return currentWordPoints * wordMultiplier;
 }
 */

@@ -26,7 +26,4 @@ public:
 	char getBonusType(int x, int y);
 	int getBonus(int x, int y);
 	void printBoard();
-	//void countLetters(int* countWord, int* countOnBoard, int* countPlayer,
-		//std::string word, int x, int y, std::string direction);
-
 };
