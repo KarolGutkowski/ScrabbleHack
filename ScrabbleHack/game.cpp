@@ -32,10 +32,10 @@ Game::Game()
 		{
 			otherPlayerWord();
 		}
-		//else if (menu == '5')
-		//{
-		//	giveBestWord();
-		//}
+		else if (menu == '5')
+		{
+			giveBestWord();
+		}
  		system("CLS");
 		ScrabbleB.printBoard();
 		std::cout << std::endl;
@@ -46,7 +46,7 @@ Game::Game()
 		std::cout << "Place word --> 2" << std::endl;
 		std::cout << "Enter your letters --> 3" << std::endl;
 		std::cout << "Enter other players word --> 4" << std::endl;
-		//std::cout << "Give me best word to place --> 5" << std::endl;
+		std::cout << "Give me best word to place --> 5" << std::endl;
 		std::cout << "End --> 0" << std::endl;
 		std::cout << "Enter a number: " << std::endl;
 		std::cin >> menu;
@@ -482,7 +482,7 @@ void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,
 	}
 }
 
-/*
+
 void Game::giveBestWord()
 {
 	std::string filename = "./Words/English/words.txt";
@@ -493,20 +493,26 @@ void Game::giveBestWord()
 		int progress = 0;
 		int total = 279496;
 		int completion = 0;
+		int highestPoints = 0;
+		std::string bestWord, bestDirection;
+		int bestX = -1;
+		int bestY = -1;
 		while (std::getline(file, word))
 		{
+			int x, y;
 			for (int i = 0; i < 14; i++)
 			{
-				int x = i+1;
+				x = i + 1;
+
 				for (int j = 0; j < 14; j++)
 				{
-					int y = j+1;
+					y = j + 1;
 					for (int m = 0; m < 2; m++)
 					{
 						std::string direction = m == 0 ? "DOWN" : "RIGHT";
 
-						if (ScrabbleB.getLetter(i, j) != ' ' || (i==7 && j==7)) {
-							 
+						if (ScrabbleB.getLetter(i, j) != ' ' || (i == 7 && j == 7)) {
+
 							int countWord[alphabetLength] = { 0 };
 							int countOnBoard[alphabetLength] = { 0 };
 							int countPlayer[alphabetLength] = { 0 };
@@ -517,14 +523,22 @@ void Game::giveBestWord()
 							if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard, adjecentWordPoints))
 							{
 								int points = adjecentWordPoints;
-								points += calculatePoints(word, direction, x,y);
-								std::cout << word << " at [" << x << "][" << y << "] " << direction << "WARDS for " << points << " points." << std::endl;
+								points += calculatePoints(word, direction, x, y);
+								if (points > highestPoints) 
+								{
+									highestPoints = points;
+									bestDirection = direction;
+									bestWord = word;
+									bestX = x;
+									bestY = y;
+								}
+								
 							}
 						}
 					}
 				}
 			}
-			
+			/*
 			progress++;
 			completion = progress * 100 / total;
 			std::cout << "\r";
@@ -537,24 +551,24 @@ void Game::giveBestWord()
 			{
 				std::cout << "-";
 			}
-			
+			*/
 			
 			progress++;
 			if (completion != progress * 100 / total) 
 			{
-				std::cout << completion << "%" << std::endl;
+				std::cout << "\r" << completion << "%";
 				completion = progress * 100 / total;
 			}
 			
 		}
-		std::cout << "Those are all the words you could place " << std::endl;
+		std::cout << "Best word is " << bestWord << " at [" << bestX << "][" << bestY << "] " << bestDirection << std::endl;
 		system("PAUSE");
 	}
 	file.close();
 }
-*/
 
-/*
+
+
 int Game::calculatePoints(std::string word, std::string direction, int x, int y)
 {
 		int currentWordPoints = 0;
@@ -587,13 +601,10 @@ int Game::calculatePoints(std::string word, std::string direction, int x, int y)
 						{
 							currentWordPoints += letterPoints * bonusAmount;
 						}
-						ScrabbleLetters Empty('.', 0);
-						PlayersLetters[j] = Empty;
 						removeFromUser = true;
 					}
 					j++;
 				}
-				ScrabbleB.setLetter(ScrabbleLetters(word[i], letterPoints), tile.first, tile.second);
 			}
 			else
 			{
@@ -602,4 +613,3 @@ int Game::calculatePoints(std::string word, std::string direction, int x, int y)
 		}
 		return currentWordPoints * wordMultiplier;
 }
-*/

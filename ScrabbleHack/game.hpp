@@ -21,6 +21,6 @@ public:
 	void sortPlayerLetters();
 	bool legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard,int& adjecentWordPoints);
 	void otherPlayerWord();
-	//void giveBestWord();
-	//int calculatePoints(std::string word, std::string direction, int x, int y);
+	void giveBestWord();
+	int calculatePoints(std::string word, std::string direction, int x, int y);
 };
