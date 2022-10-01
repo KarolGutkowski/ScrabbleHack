@@ -275,7 +275,10 @@ bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direct
 	{
 		onBoard += countOnBoard[i];
 	}
-	if (onBoard == 0 && ScrabbleB.getLetter(7, 7) != ' ')
+	
+
+	//fix this cause this isnt neceserally how we check legal placement
+	if ((onBoard == 0 && ScrabbleB.getLetter(7, 7) != ' ') && !isConnected(word,direction,x,y))
 	{
 		//std::cout << "Can not place the word in this place (2)" << std::endl;
 			//system("PAUSE");
@@ -612,4 +615,26 @@ int Game::calculatePoints(std::string word, std::string direction, int x, int y)
 			}
 		}
 		return currentWordPoints * wordMultiplier;
+}
+
+
+bool Game::isConnected(std::string word, std::string direction, int x, int y)
+{
+	std::pair<int, int> nextTo1;
+	std::pair<int, int> nextTo2;
+	for (int i = 0; i < word.length(); i++)
+	{
+		if (direction == "DOWN")
+		{
+			nextTo1 = std::make_pair(y - 1 + i, x);
+			nextTo2 = std::make_pair(y - 1 + i, x-2);
+		}
+		else
+		{
+			nextTo1 = std::make_pair(y-2, x - 1 + i);
+			nextTo2 = std::make_pair(y, x - 1 + i);
+		}
+		if (ScrabbleB.getLetter(nextTo1.second, nextTo1.first) != ' ' || ScrabbleB.getLetter(nextTo2.second, nextTo2.first) != ' ') return true;
+	}
+	return false;
 }

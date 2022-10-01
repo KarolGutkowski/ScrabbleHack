@@ -23,4 +23,5 @@ public:
 	void otherPlayerWord();
 	void giveBestWord();
 	int calculatePoints(std::string word, std::string direction, int x, int y);
+	bool isConnected(std::string word, std::string direction, int x,int y);
 };
