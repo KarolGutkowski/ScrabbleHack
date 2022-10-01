@@ -555,7 +555,6 @@ void Game::giveBestWord()
 				std::cout << "-";
 			}
 			*/
-			
 			progress++;
 			if (completion != progress * 100 / total) 
 			{
@@ -564,6 +563,8 @@ void Game::giveBestWord()
 			}
 			
 		}
+		if (bestWord == "") bestWord = "error in finding best word";
+		if (bestDirection == "") bestDirection = "error finding best direction";
 		std::cout << "Best word is " << bestWord << " at [" << bestX << "][" << bestY << "] " << bestDirection << std::endl;
 		system("PAUSE");
 	}
@@ -634,7 +635,15 @@ bool Game::isConnected(std::string word, std::string direction, int x, int y)
 			nextTo1 = std::make_pair(y-2, x - 1 + i);
 			nextTo2 = std::make_pair(y, x - 1 + i);
 		}
-		if (ScrabbleB.getLetter(nextTo1.second, nextTo1.first) != ' ' || ScrabbleB.getLetter(nextTo2.second, nextTo2.first) != ' ') return true;
+		if (nextTo1.first >= 15 || nextTo1.first < 0) 
+			nextTo1 = nextTo2;
+		else if (nextTo1.second >= 15 || nextTo1.second < 0)
+			nextTo1 = nextTo2;
+		else if (nextTo2.first >= 15 || nextTo2.first < 0) 
+			nextTo2 = nextTo1;
+		else if (nextTo2.second >= 15 || nextTo2.second < 0)
+			nextTo2 = nextTo1;
+ 		if (ScrabbleB.getLetter(nextTo1.second, nextTo1.first) != ' ' || ScrabbleB.getLetter(nextTo2.second, nextTo2.first) != ' ') return true;
 	}
 	return false;
 }
