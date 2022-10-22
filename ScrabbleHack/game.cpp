@@ -514,7 +514,7 @@ void Game::giveBestWord()
 					{
 						std::string direction = m == 0 ? "DOWN" : "RIGHT";
 
-						if (ScrabbleB.getLetter(i, j) != ' ' || (i == 7 && j == 7)) {
+						if (ScrabbleB.getLetter(i, j) != ' ' || (i == 7 && j == 7) || isConnected(word,direction, x,y)) {
 
 							int countWord[alphabetLength] = { 0 };
 							int countOnBoard[alphabetLength] = { 0 };
