@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <fstream>
 #include <chrono>
-#define alphabetLength 27
+#define alphabetLength 26
 
 
 Game::Game()
