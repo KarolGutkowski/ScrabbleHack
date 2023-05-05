@@ -175,21 +175,8 @@ void Game::placeWord()
 }
 
 bool Game::IsLegalWord(std::string& word)
-{
-	std::string filename = "./Words/groupedByLetters/wordsStartingWith_";
-	filename += (char)toupper(word[0]);
-	filename += ".txt";
-	std::ifstream file(filename);
-	if (file.is_open())
-	{
-		std::string line;
-		while (std::getline(file, line))
-		{
-			if (word == line) return true;
-		}
-	}
-	file.close();
-	return false;
+{	
+	return wordsSet.find(word) != wordsSet.end();
 }
 
 
@@ -431,7 +418,7 @@ void Game::otherPlayerWord()
 	std::string word, direction;
 	int x, y;
 	enterData(word,x,y,direction);
-	if (word == "") return;
+	if (word == "" || word=="0") return;
 	int* countWord = new int[alphabetLength] {0};
 	int* countOnBoard = new int[alphabetLength] {0};
 	countWordLetters(countWord, word);
@@ -511,79 +498,62 @@ void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,
 	}
 }
 
-/*
+
 void Game::giveBestWord()
 {
-	std::string filename = "./Words/English/words.txt";
-	std::ifstream file(filename);
-	if (file.is_open())
+	for(std::string word: wordsList)
 	{
-		std::string word;
-		int progress = 0;
-		int total = 279496;
-		int completion = 0;
 		int highestPoints = 0;
 		std::string bestWord, bestDirection;
 		int bestX = -1;
 		int bestY = -1;
-		while (std::getline(file, word))
+		int x, y;
+		for (int i = 0; i < 14; i++)
 		{
-			int x, y;
-			for (int i = 0; i < 14; i++)
+			x = i + 1;
+
+			for (int j = 0; j < 14; j++)
 			{
-				x = i + 1;
-
-				for (int j = 0; j < 14; j++)
+				y = j + 1;
+				for (int m = 0; m < 2; m++)
 				{
-					y = j + 1;
-					for (int m = 0; m < 2; m++)
-					{
-						std::string direction = m == 0 ? "DOWN" : "RIGHT";
+					std::string direction = m == 0 ? "DOWN" : "RIGHT";
 
-						if (ScrabbleB.getLetter(i, j) != ' ' || (i == 7 && j == 7) || isConnected(word,direction, x,y)) {
+					if (ScrabbleB.getLetter(i, j) != ' ' || (i == 7 && j == 7) || isConnected(word,direction, x,y)) {
 
-							int countWord[alphabetLength] = { 0 };
-							int countOnBoard[alphabetLength] = { 0 };
-							int countPlayer[alphabetLength] = { 0 };
-							int countBlanks = 0;
-							countLetters(countWord, countOnBoard, countPlayer, word, x, y, direction, countBlanks);
-							int missing = missingLetters(countWord, countOnBoard, countPlayer, countBlanks);
-							int adjecentWordPoints = 0;
-							if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard, adjecentWordPoints))
+						int countWord[alphabetLength] = { 0 };
+						int countOnBoard[alphabetLength] = { 0 };
+						int countPlayer[alphabetLength] = { 0 };
+						int countBlanks = 0;
+						countLetters(countWord, countOnBoard, countPlayer, word, x, y, direction, countBlanks);
+						int missing = missingLetters(countWord, countOnBoard, countPlayer, countBlanks);
+						int adjecentWordPoints = 0;
+						if (missing == 0 && legalPlacement(word, x, y, direction, countOnBoard, adjecentWordPoints))
+						{
+							int points = adjecentWordPoints;
+							points += calculatePoints(word, direction, x, y);
+							if (points > highestPoints) 
 							{
-								int points = adjecentWordPoints;
-								points += calculatePoints(word, direction, x, y);
-								if (points > highestPoints) 
-								{
-									highestPoints = points;
-									bestDirection = direction;
-									bestWord = "test";
-									bestX = x;
-									bestY = y;
-								}
-								
+								highestPoints = points;
+								bestDirection = direction;
+								bestWord = "test";
+								bestX = x;
+								bestY = y;
 							}
+								
 						}
 					}
 				}
 			}
-
-			progress++;
-			if (completion != progress * 100 / total) 
-			{
-				std::cout << "\r" << completion << "%";
-				completion = progress * 100 / total;
-			}
-			
 		}
+		
 		if (bestWord == "") bestWord = "error in finding best word";
 		if (bestDirection == "") bestDirection = "error finding best direction";
 		std::cout << "Best word is " << bestWord << " at [" << bestX << "][" << bestY << "] " << bestDirection << std::endl;
 		system("PAUSE");
 	}
-	file.close();
 }
-*/
+
 
 
 int Game::calculatePoints(std::string word, std::string direction, int x, int y)
