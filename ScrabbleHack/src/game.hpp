@@ -19,14 +19,14 @@ public:
 	void placeWord();
 	bool IsLegalWord(std::string&);
 	void enterData(std::string &word, int &x, int &y, std::string &direction);
-	void countLetters(int* countWord, int* countOnBoard, int* countPlayer,
+	void countLetters(std::vector<int>& countWord, std::vector<int>& countOnBoard, std::vector<int>& countPlayer,
 		std::string word, int x, int y, std::string direction, int& countBlanks);
-	void countWordLetters(int* countWord,std::string word);
-	void countPlayerLetters(int* countPlayer,int& countBlanks);
-	void countBoardLetters(int* countOnBoard, std::string word, int x, int y, std::string direction);
-	int missingLetters(int* countWord, int* countOnBoard, int* countPlayer, int countBlanks);
+	void countWordLetters(std::vector<int>& countWord,std::string word);
+	void countPlayerLetters(std::vector<int>& countPlayer, int& countBlanks);
+	void countBoardLetters(std::vector<int>& countOnBoard, std::string word, int x, int y, std::string direction);
+	int missingLetters(std::vector<int>& countWord, std::vector<int>& countOnBoard, std::vector<int>& countPlayer, int countBlanks);
 	void sortPlayerLetters();
-	bool legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard,int& adjecentWordPoints);
+	bool legalPlacement(std::string& word, int& x, int& y, std::string &direction, std::vector<int>& countOnBoard,int& adjecentWordPoints);
 	void otherPlayerWord();
 	void giveBestWord();
 	int calculatePoints(std::string word, std::string direction, int x, int y);

@@ -6,7 +6,8 @@
 #include <utility>
 #include <ctype.h>
 #include <fstream>
-#define alphabetLength 26
+#include <chrono>
+#define alphabetLength 27
 
 
 Game::Game()
@@ -41,12 +42,12 @@ void Game::showCurrentGameMenu()
 		{
 			otherPlayerWord();
 		}
-		/*
+		
 		else if (menu == '5')
 		{
 			giveBestWord();
 		}
-		*/
+		
 		system("CLS");
 		ScrabbleB.printBoard();
 		std::cout << std::endl;
@@ -57,7 +58,7 @@ void Game::showCurrentGameMenu()
 		std::cout << "Place word --> 2" << std::endl;
 		std::cout << "Enter your letters --> 3" << std::endl;
 		std::cout << "Enter other players word --> 4" << std::endl;
-		//std::cout << "Give me best word to place --> 5" << std::endl;
+		std::cout << "Give me best word to place --> 5" << std::endl;
 		std::cout << "End --> 0" << std::endl;
 		std::cout << "Enter a number: " << std::endl;
 		std::cin >> menu;
@@ -97,9 +98,10 @@ void Game::placeWord()
 	int x, y, countBlanks=0;
 	enterData(word,x, y,direction);
 	if (word == "0") return;
-	int* countWord = new int[alphabetLength] {0};
-	int* countOnBoard = new int[alphabetLength] {0};
-	int* countPlayer = new int[alphabetLength] {0};
+
+	std::vector<int> countWord(alphabetLength);
+	std::vector<int> countOnBoard(alphabetLength);
+	std::vector<int> countPlayer(alphabetLength);
 
 	countLetters(countWord, countOnBoard, countPlayer, word,x ,y, direction, countBlanks);
 
@@ -167,9 +169,6 @@ void Game::placeWord()
 		}
 		points += currentWordPoints * wordMultiplier;
 		points += adjecentWordPoints;
-		delete[] countWord;
-		delete[] countOnBoard;
-		delete[] countPlayer;
 		sortPlayerLetters();
 	}
 }
@@ -180,7 +179,9 @@ bool Game::IsLegalWord(std::string& word)
 }
 
 
-void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
+void Game::countLetters(std::vector<int>& countWord, 
+	std::vector<int>& countOnBoard, 
+	std::vector<int>& countPlayer,
 	std::string word, int x, int y ,std::string direction, int& countBlanks)
 {
 	countWordLetters(countWord, word);
@@ -188,7 +189,10 @@ void Game::countLetters(int* countWord, int* countOnBoard, int* countPlayer,
 	countBoardLetters(countOnBoard, word, x, y, direction);
 }
 
-int Game::missingLetters(int* countWord, int* countOnBoard, int* countPlayer, int countBlanks)
+int Game::missingLetters(std::vector<int>& countWord, 
+	std::vector<int>& countOnBoard, 
+	std::vector<int>& countPlayer, 
+	int countBlanks)
 {
 	int missing = 0;
 	for (int i = 0; i < alphabetLength; i++)
@@ -274,7 +278,7 @@ void Game::enterData(std::string& word, int& x, int& y, std::string& direction)
 	}
 }
 
-bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direction, int* countOnBoard,int& adjecentWordPoints)
+bool Game::legalPlacement(std::string& word, int& x, int& y, std::string &direction, std::vector<int>& countOnBoard,int& adjecentWordPoints)
 {
 	//checking if 
 	std::pair<int, int> tile = direction == "DOWN" ? std::make_pair(y-2, x - 1) : std::make_pair(y - 1, x - 2);
@@ -419,8 +423,9 @@ void Game::otherPlayerWord()
 	int x, y;
 	enterData(word,x,y,direction);
 	if (word == "" || word=="0") return;
-	int* countWord = new int[alphabetLength] {0};
-	int* countOnBoard = new int[alphabetLength] {0};
+	std::vector<int> countWord(alphabetLength);
+	std::vector<int> countOnBoard(alphabetLength);
+
 	countWordLetters(countWord, word);
 	countBoardLetters(countOnBoard, word, x, y, direction);
 	int adjecentWordPoints = 0;
@@ -453,7 +458,7 @@ void Game::otherPlayerWord()
 }
 
 
-void Game::countWordLetters(int* countWord, std::string word)
+void Game::countWordLetters(std::vector<int>& countWord, std::string word)
 {
 	for (int i = 0; i < word.length(); i++)
 	{
@@ -461,7 +466,7 @@ void Game::countWordLetters(int* countWord, std::string word)
 	}
 }
 
-void Game::countPlayerLetters(int* countPlayer, int & countBlanks)
+void Game::countPlayerLetters(std::vector<int>& countPlayer, int & countBlanks)
 {
 	for (int i = 0; i < 7; i++)
 	{
@@ -476,7 +481,7 @@ void Game::countPlayerLetters(int* countPlayer, int & countBlanks)
 	}
 }
 
-void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,std::string direction)
+void Game::countBoardLetters(std::vector<int>& countOnBoard, std::string word, int x, int y, std::string direction)
 {
 	for (int i = 0; i < word.length(); i++)
 	{
@@ -489,11 +494,19 @@ void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,
 		{
 			tile = std::make_pair(y - 1, x - 1 + i);
 		}
-
-		if (ScrabbleB.getLetter(tile.second, tile.first) != ' ')
+		if (tile.first >= 15 || tile.second >= 15) break;
+		int letterToASCII = (int)ScrabbleB.getLetter(tile.second, tile.first);
+		if (letterToASCII >=65 && letterToASCII <=90)
 		{
-			char letter = ScrabbleB.getLetter(tile.second, tile.first);
-			countOnBoard[int(ScrabbleB.getLetter(tile.second, tile.first)) - 65]++;
+			try
+			{
+				countOnBoard[(int)(ScrabbleB.getLetter(tile.second, tile.first)) - 65]++;
+			}
+			catch (std::exception ex)
+			{
+				std::cout << ex.what() << std::endl;
+			}
+			
 		}
 	}
 }
@@ -501,12 +514,17 @@ void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,
 
 void Game::giveBestWord()
 {
-	for(std::string word: wordsList)
+	std::string bestWord = "";
+	std::string bestDirection = "";
+	int bestX = -1;
+	int bestY = -1;
+	int highestPoints = 0;
+
+	int checkedWords = 0;
+	
+	std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+	for (std::string word : wordsList)
 	{
-		int highestPoints = 0;
-		std::string bestWord, bestDirection;
-		int bestX = -1;
-		int bestY = -1;
 		int x, y;
 		for (int i = 0; i < 14; i++)
 		{
@@ -518,12 +536,11 @@ void Game::giveBestWord()
 				for (int m = 0; m < 2; m++)
 				{
 					std::string direction = m == 0 ? "DOWN" : "RIGHT";
-
-					if (ScrabbleB.getLetter(i, j) != ' ' || (i == 7 && j == 7) || isConnected(word,direction, x,y)) {
-
-						int countWord[alphabetLength] = { 0 };
-						int countOnBoard[alphabetLength] = { 0 };
-						int countPlayer[alphabetLength] = { 0 };
+					if (ScrabbleB.getLetter(i, j) != ' ' || (i == 7 && j == 7) || isConnected(word, direction, x, y))
+					{
+						std::vector<int> countWord(alphabetLength);
+						std::vector<int> countOnBoard(alphabetLength);
+						std::vector<int> countPlayer(alphabetLength);
 						int countBlanks = 0;
 						countLetters(countWord, countOnBoard, countPlayer, word, x, y, direction, countBlanks);
 						int missing = missingLetters(countWord, countOnBoard, countPlayer, countBlanks);
@@ -532,26 +549,30 @@ void Game::giveBestWord()
 						{
 							int points = adjecentWordPoints;
 							points += calculatePoints(word, direction, x, y);
-							if (points > highestPoints) 
+							if (points > highestPoints)
 							{
 								highestPoints = points;
 								bestDirection = direction;
-								bestWord = "test";
+								bestWord = word;
 								bestX = x;
 								bestY = y;
 							}
-								
+
 						}
 					}
 				}
 			}
 		}
-		
-		if (bestWord == "") bestWord = "error in finding best word";
-		if (bestDirection == "") bestDirection = "error finding best direction";
-		std::cout << "Best word is " << bestWord << " at [" << bestX << "][" << bestY << "] " << bestDirection << std::endl;
-		system("PAUSE");
+		++checkedWords;
 	}
+	std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
+
+	std::chrono::seconds timeInSeconds = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+	std::cout << "Best word:" << bestWord << " at[" << bestX << ", " << bestY << "]" << std::endl;
+	std::cout << "Words checked " << checkedWords << std::endl; 
+	std::cout << std::endl;
+	std::cout << "Time spend = " << timeInSeconds.count() << "s" << std::endl;
+	system("PAUSE");
 }
 
 
