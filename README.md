@@ -13,3 +13,5 @@ For any bugs please message me at: scrabblehackkg[at]gmail[dot]com
 very advanced version of app will use computer vision to recognize board and players letters to
 automatize proccess of suggesting best words (there's also a possibility that this app will get
 it's android or IOS version). -->
+*note: As of 5th May 2023 the giveBestWord method functions very slowly and it's implementation
+is to be fixed*
