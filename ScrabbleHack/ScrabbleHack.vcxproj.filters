@@ -15,27 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="board.cpp">
+    <ClCompile Include="src\board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="letters.cpp">
+    <ClCompile Include="src\letters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
+    <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="board.hpp">
+    <ClInclude Include="src\board.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="letters.hpp">
+    <ClInclude Include="src\letters.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="game.hpp">
+    <ClInclude Include="src\game.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,13 +1,20 @@
 #include "board.hpp"
+#include <vector>
+#include <set>
 class Game
 {
 	friend class Board;
 private:
 	ScrabbleLetters PlayersLetters[7];
+	std::vector<std::string> wordsList;
+	std::set<std::string> wordsSet;
 	int points;
 public:
 	Board ScrabbleB;
 	Game();
+	void Start();
+	void loadData();
+	void showCurrentGameMenu();
 	void enterLetters();
 	void placeWord();
 	bool IsLegalWord(std::string&);

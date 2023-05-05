@@ -12,11 +12,20 @@
 Game::Game()
 {
 	points = 0;
+	loadData();
+}
+void Game::Start()
+{
 	ScrabbleLetters Empty('.', 0);
 	for (int i = 0; i < 7; i++)
 	{
 		PlayersLetters[i] = Empty;
 	}
+	showCurrentGameMenu();
+}
+
+void Game::showCurrentGameMenu()
+{
 	char menu = '1';
 	while (menu != '0')
 	{
@@ -36,7 +45,7 @@ Game::Game()
 		{
 			giveBestWord();
 		}
- 		system("CLS");
+		system("CLS");
 		ScrabbleB.printBoard();
 		std::cout << std::endl;
 		for (int i = 0; i < 7; i++) std::cout << std::setw(3) << PlayersLetters[i] << " ";
@@ -51,7 +60,22 @@ Game::Game()
 		std::cout << "Enter a number: " << std::endl;
 		std::cin >> menu;
 	}
-	
+}
+
+void Game::loadData()
+{
+	std::string filename = "./Words/English/words.txt";
+	std::ifstream file(filename);
+	if (file.is_open())
+	{
+		std::string line;
+		while (std::getline(file, line))
+		{
+			wordsList.push_back(line);
+			wordsSet.insert(line);
+		}
+	}
+	file.close();
 }
 
 void Game::enterLetters()
