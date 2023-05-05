@@ -41,10 +41,12 @@ void Game::showCurrentGameMenu()
 		{
 			otherPlayerWord();
 		}
+		/*
 		else if (menu == '5')
 		{
 			giveBestWord();
 		}
+		*/
 		system("CLS");
 		ScrabbleB.printBoard();
 		std::cout << std::endl;
@@ -55,7 +57,7 @@ void Game::showCurrentGameMenu()
 		std::cout << "Place word --> 2" << std::endl;
 		std::cout << "Enter your letters --> 3" << std::endl;
 		std::cout << "Enter other players word --> 4" << std::endl;
-		std::cout << "Give me best word to place --> 5" << std::endl;
+		//std::cout << "Give me best word to place --> 5" << std::endl;
 		std::cout << "End --> 0" << std::endl;
 		std::cout << "Enter a number: " << std::endl;
 		std::cin >> menu;
@@ -509,7 +511,7 @@ void Game::countBoardLetters(int* countOnBoard, std::string word, int x, int y ,
 	}
 }
 
-
+/*
 void Game::giveBestWord()
 {
 	std::string filename = "./Words/English/words.txt";
@@ -565,20 +567,7 @@ void Game::giveBestWord()
 					}
 				}
 			}
-			/*
-			progress++;
-			completion = progress * 100 / total;
-			std::cout << "\r";
-			std::cout << "[";
-			for (int j = 0; j < completion / 10; j++)
-			{
-				std::cout << (char)254u;
-			}
-			for (int j = 0; j < 10 - (completion / 10); j++)
-			{
-				std::cout << "-";
-			}
-			*/
+
 			progress++;
 			if (completion != progress * 100 / total) 
 			{
@@ -594,7 +583,7 @@ void Game::giveBestWord()
 	}
 	file.close();
 }
-
+*/
 
 
 int Game::calculatePoints(std::string word, std::string direction, int x, int y)
