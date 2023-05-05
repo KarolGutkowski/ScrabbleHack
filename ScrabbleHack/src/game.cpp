@@ -555,7 +555,7 @@ void Game::giveBestWord()
 								{
 									highestPoints = points;
 									bestDirection = direction;
-									bestWord = word;
+									bestWord = "test";
 									bestX = x;
 									bestY = y;
 								}
